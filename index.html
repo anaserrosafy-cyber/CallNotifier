@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Call Notifier</title>
+
+<style>
+body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    background:#111827;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.card{
+    width:90%;
+    max-width:420px;
+    background:#1f2937;
+    border-radius:25px;
+    padding:30px;
+    text-align:center;
+}
+
+#icon{
+    font-size:70px;
+}
+
+#title{
+    font-size:28px;
+    margin-top:10px;
+    font-weight:bold;
+}
+
+#name{
+    font-size:32px;
+    margin-top:25px;
+}
+
+#number{
+    font-size:22px;
+    color:#cbd5e1;
+    margin-top:10px;
+}
+
+#text{
+    display:none;
+    margin-top:20px;
+    background:#374151;
+    border-radius:12px;
+    padding:15px;
+}
+
+.status{
+    margin-top:30px;
+    color:#22c55e;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+<div id="icon">📞</div>
+
+<div id="title">En attente...</div>
+
+<div id="name">Aucun appel</div>
+
+<div id="number">---</div>
+
+<div id="text"></div>
+
+<div class="status">
+🟢 Connecté
+</div>
+
+</div>
+
+<script type="module">
+
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCFUl7qquf1JHF5z7wYo1Me4KveDEORCC4",
+  authDomain: "callnotifier-7e7ea.firebaseapp.com",
+  databaseURL: "https://callnotifier-7e7ea-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "callnotifier-7e7ea",
+  storageBucket: "callnotifier-7e7ea.firebasestorage.app",
+  messagingSenderId: "165647390009",
+  appId: "1:165647390009:web:b4751828e2f76a570544e8"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const icon=document.getElementById("icon");
+const title=document.getElementById("title");
+const name=document.getElementById("name");
+const number=document.getElementById("number");
+const text=document.getElementById("text");
+
+onValue(ref(db,"call"),(snapshot)=>{
+
+    const d=snapshot.val();
+
+    if(!d) return;
+
+    name.innerHTML=d.name || "Inconnu";
+    number.innerHTML=d.number || "";
+
+    if(d.type==="sms"){
+
+        icon.innerHTML="💬";
+        title.innerHTML="SMS";
+        text.style.display="block";
+        text.innerHTML=d.text || "";
+
+    }else{
+
+        icon.innerHTML="📞";
+        title.innerHTML="APPEL ENTRANT";
+        text.style.display="none";
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>
