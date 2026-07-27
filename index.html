@@ -2,96 +2,56 @@
 <html lang="fr">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CallNotifier</title>
 
-<meta charset="UTF-8">
-
-<meta name="viewport"
-content="width=device-width,initial-scale=1">
-
-<title>CallNotifier</title>
-
-<link rel="stylesheet"
-href="style.css">
-
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header>
 
-<h1>📞 CallNotifier</h1>
+    <h1>📞 CallNotifier</h1>
 
-<p>Synchronisation temps réel</p>
+    <p>Synchronisation en temps réel</p>
 
 </header>
 
 <div class="searchBox">
 
-<input
-id="search"
-placeholder="🔍 Rechercher un contact">
+    <input
+        id="search"
+        type="text"
+        placeholder="🔍 Rechercher un contact ou un numéro">
 
 </div>
 
-<div class="stats"
-id="stats">
+<div id="stats" class="stats">
 
-0 événement
+    0 événement
 
 </div>
 
 <div class="sectionTitle">
 
-Aujourd'hui
+    Historique
 
 </div>
 
 <div id="history">
 
-<div class="empty">
+    <div class="empty">
 
-Chargement...
+        Chargement...
 
-</div>
-
-</div>
-
-<h1>📞 CallNotifier</h1>
-
-<p>Historique des appels</p>
-  <div id="stats" style="margin-top:15px;font-size:15px;color:#cbd5e1;">
-0 événements
-</div>
-
-</header>
-
-<div id="history">
-
-<div class="empty">
-
-Chargement...
+    </div>
 
 </div>
 
-</div>
-
-<script type="module"
-src="app.js"></script>
+<script type="module" src="app.js"></script>
 
 </body>
 
 </html>
-<input
-id="search"
-type="text"
-placeholder="🔍 Rechercher un nom ou un numéro..."
-style="
-width:90%;
-max-width:700px;
-margin:20px auto;
-display:block;
-padding:14px;
-border:none;
-border-radius:12px;
-font-size:17px;">
-
