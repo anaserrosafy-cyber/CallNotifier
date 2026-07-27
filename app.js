@@ -34,6 +34,7 @@ function formatTime(ts){
     return new Date(Number(ts)*1000).toLocaleString("fr-FR");
 
 }
+const stats=document.getElementById("stats");
 
 function render(list){
 
