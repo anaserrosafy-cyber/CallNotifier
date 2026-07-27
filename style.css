@@ -124,3 +124,62 @@ transform:translateY(0);
 }
 
 }
+.searchBox{
+
+max-width:700px;
+
+margin:20px auto;
+
+padding:0 20px;
+
+}
+
+.searchBox input{
+
+width:100%;
+
+padding:15px;
+
+border-radius:14px;
+
+border:none;
+
+outline:none;
+
+font-size:17px;
+
+background:#1e293b;
+
+color:white;
+
+}
+
+.stats{
+
+max-width:700px;
+
+margin:auto;
+
+padding:0 20px 20px;
+
+color:#94a3b8;
+
+font-size:14px;
+
+}
+
+.sectionTitle{
+
+max-width:700px;
+
+margin:auto;
+
+padding:15px 20px;
+
+font-size:18px;
+
+font-weight:bold;
+
+color:#cbd5e1;
+
+}
