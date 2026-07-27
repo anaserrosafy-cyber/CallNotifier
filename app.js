@@ -7,46 +7,44 @@ function badge(item){
     if(item.type==="sms")
         return '<span class="badge sms">💬 SMS</span>';
 
-    if(item.status==="missed")
-        return '<span class="badge missed">❌ Manqué</span>';
+    switch(item.status){
 
-    if(item.status==="answered")
-        return '<span class="badge answered">🟢 Répondu</span>';
+        case "ringing":
+            return '<span class="badge call">📞 Appel entrant</span>';
 
-    if(item.status==="ended")
-        return '<span class="badge answered">☎️ Terminé</span>';
+        case "answered":
+            return '<span class="badge answered">🟢 Répondu</span>';
 
-    return '<span class="badge call">📞 Appel</span>';
+        case "ended":
+            return '<span class="badge answered">☎️ Terminé</span>';
 
-}
+        case "missed":
+            return '<span class="badge missed">❌ Manqué</span>';
 
-function formatTime(timestamp){
-
-    if(!timestamp) return "";
-
-    const date = new Date(Number(timestamp)*1000);
-
-    return date.toLocaleString("fr-FR");
+        default:
+            return '<span class="badge call">📞 Appel</span>';
+    }
 
 }
 
-onValue(ref(db,"calls"), snapshot=>{
+function formatTime(ts){
+
+    if(!ts) return "";
+
+    return new Date(Number(ts)*1000).toLocaleString("fr-FR");
+
+}
+
+function render(list){
 
     history.innerHTML="";
 
-    const data=snapshot.val();
+    if(list.length===0){
 
-    if(!data){
-
-        history.innerHTML='<div class="empty">Aucun appel</div>';
-
+        history.innerHTML='<div class="empty">Aucun événement</div>';
         return;
 
     }
-
-    const list=Object.values(data);
-
-    list.sort((a,b)=>Number(b.time)-Number(a.time));
 
     list.forEach(item=>{
 
@@ -72,12 +70,15 @@ ${item.number || ""}
 
 </div>
 
-<div class="message"
-style="${item.type==="sms"?"display:block":"display:none"}">
-
+${
+item.type==="sms"
+?
+`<div class="message" style="display:block;">
 ${item.text || ""}
-
-</div>
+</div>`
+:
+""
+}
 
 <div class="time">
 
@@ -90,5 +91,24 @@ ${item.text || ""}
 `;
 
     });
+
+}
+
+onValue(ref(db,"calls"),snapshot=>{
+
+    const data=snapshot.val();
+
+    if(!data){
+
+        render([]);
+        return;
+
+    }
+
+    const list=Object.values(data);
+
+    list.sort((a,b)=>Number(b.time)-Number(a.time));
+
+    render(list);
 
 });
