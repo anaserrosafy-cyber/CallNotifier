@@ -1,13 +1,17 @@
 import { db, ref, onValue } from "./firebase.js";
 
 const history = document.getElementById("history");
+const stats = document.getElementById("stats");
+const search = document.getElementById("search");
 
-function badge(item){
+let allEvents = [];
 
-    if(item.type==="sms")
+function badge(item) {
+
+    if (item.type === "sms")
         return '<span class="badge sms">💬 SMS</span>';
 
-    switch(item.status){
+    switch (item.status) {
 
         case "ringing":
             return '<span class="badge call">📞 Appel entrant</span>';
@@ -23,69 +27,69 @@ function badge(item){
 
         default:
             return '<span class="badge call">📞 Appel</span>';
+
     }
 
 }
 
-function formatTime(ts){
+function formatTime(timestamp) {
 
-    if(!ts) return "";
+    if (!timestamp) return "";
 
-    return new Date(Number(ts)*1000).toLocaleString("fr-FR");
+    return new Date(Number(timestamp) * 1000).toLocaleString("fr-FR");
 
 }
-const stats=document.getElementById("stats");
 
-function render(list){
+function render(list) {
 
-    history.innerHTML="";
+    history.innerHTML = "";
 
-    if(list.length===0){
+    stats.textContent = `${list.length} événement(s)`;
 
-        history.innerHTML='<div class="empty">Aucun événement</div>';
+    if (list.length === 0) {
+
+        history.innerHTML = '<div class="empty">Aucun résultat</div>';
         return;
 
     }
 
-    list.forEach(item=>{
+    list.forEach(item => {
 
-        history.innerHTML+=`
+        history.innerHTML += `
 
 <div class="card">
 
-<div class="top">
+    <div class="top">
 
-${badge(item)}
+        ${badge(item)}
 
-</div>
+    </div>
 
-<div class="name">
+    <div class="name">
 
-${item.name || "Numéro inconnu"}
+        ${item.name || "Numéro inconnu"}
 
-</div>
+    </div>
 
-<div class="number">
+    <div class="number">
 
-${item.number || ""}
+        ${item.number || ""}
 
-</div>
+    </div>
 
-${
-item.type==="sms"
-?
-`<div class="message" style="display:block;">
-${item.text || ""}
-</div>`
-:
-""
-}
+    ${
+        item.type === "sms"
+        ? `<div class="message" style="display:block;">
+            ${item.text || ""}
+           </div>`
+        : ""
+    }
 
-<div class="time">
+    <div class="time">
 
-🕒 ${formatTime(item.time)}
+        🕒 ${formatTime(item.time)}
 
-</div>
+    </div>
 
 </div>
 
@@ -95,21 +99,40 @@ ${item.text || ""}
 
 }
 
-onValue(ref(db,"calls"),snapshot=>{
+onValue(ref(db, "calls"), snapshot => {
 
-    const data=snapshot.val();
+    const data = snapshot.val();
 
-    if(!data){
+    if (!data) {
 
+        allEvents = [];
         render([]);
         return;
 
     }
 
-    const list=Object.values(data);
+    allEvents = Object.values(data);
 
-    list.sort((a,b)=>Number(b.time)-Number(a.time));
+    allEvents.sort((a, b) => Number(b.time) - Number(a.time));
 
-    render(list);
+    render(allEvents);
+
+});
+
+search.addEventListener("input", () => {
+
+    const value = search.value.toLowerCase();
+
+    const filtered = allEvents.filter(item => {
+
+        const name = (item.name || "").toLowerCase();
+
+        const number = (item.number || "").toLowerCase();
+
+        return name.includes(value) || number.includes(value);
+
+    });
+
+    render(filtered);
 
 });
