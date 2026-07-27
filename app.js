@@ -54,6 +54,24 @@ function render(list) {
     }
 
     list.forEach(item => {
+        const icon =
+item.type==="sms"
+?
+"💬"
+:
+item.status==="missed"
+?
+"❌"
+:
+item.status==="answered"
+?
+"🟢"
+:
+item.status==="ended"
+?
+"☎️"
+:
+"📞";
 
         history.innerHTML += `
 
