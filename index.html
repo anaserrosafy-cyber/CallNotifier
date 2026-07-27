@@ -2,15 +2,16 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>Call Notifier</title>
 
 <style>
 body{
     margin:0;
-    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-    background:#111827;
+    background:#0f172a;
     color:white;
+    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
     display:flex;
     justify-content:center;
     align-items:center;
@@ -20,39 +21,36 @@ body{
 .card{
     width:90%;
     max-width:420px;
-    background:#1f2937;
-    border-radius:25px;
+    background:#1e293b;
+    border-radius:20px;
     padding:30px;
     text-align:center;
 }
 
-#icon{
+.icon{
     font-size:70px;
 }
 
-#title{
+.type{
     font-size:28px;
-    margin-top:10px;
     font-weight:bold;
+    margin-top:10px;
 }
 
-#name{
-    font-size:32px;
-    margin-top:25px;
+.name{
+    margin-top:20px;
+    font-size:34px;
 }
 
-#number{
+.number{
+    margin-top:10px;
     font-size:22px;
     color:#cbd5e1;
-    margin-top:10px;
 }
 
-#text{
-    display:none;
+.time{
     margin-top:20px;
-    background:#374151;
-    border-radius:12px;
-    padding:15px;
+    color:#94a3b8;
 }
 
 .status{
@@ -67,15 +65,15 @@ body{
 
 <div class="card">
 
-<div id="icon">📞</div>
+<div class="icon" id="icon">📞</div>
 
-<div id="title">En attente...</div>
+<div class="type" id="type">En attente...</div>
 
-<div id="name">Aucun appel</div>
+<div class="name" id="name">Aucun appel</div>
 
-<div id="number">---</div>
+<div class="number" id="number">---</div>
 
-<div id="text"></div>
+<div class="time" id="time"></div>
 
 <div class="status">
 🟢 Connecté
@@ -85,8 +83,8 @@ body{
 
 <script type="module">
 
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js';
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCFUl7qquf1JHF5z7wYo1Me4KveDEORCC4",
@@ -102,10 +100,10 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 const icon=document.getElementById("icon");
-const title=document.getElementById("title");
+const type=document.getElementById("type");
 const name=document.getElementById("name");
 const number=document.getElementById("number");
-const text=document.getElementById("text");
+const time=document.getElementById("time");
 
 onValue(ref(db,"call"),(snapshot)=>{
 
@@ -113,21 +111,17 @@ onValue(ref(db,"call"),(snapshot)=>{
 
     if(!d) return;
 
-    name.innerHTML=d.name || "Inconnu";
-    number.innerHTML=d.number || "";
+    icon.textContent=d.type==="sms"?"💬":"📞";
+    type.textContent=d.type==="sms"?"SMS":"APPEL ENTRANT";
 
-    if(d.type==="sms"){
+    name.textContent=d.name || "Numéro inconnu";
+    number.textContent=d.number || "";
 
-        icon.innerHTML="💬";
-        title.innerHTML="SMS";
-        text.style.display="block";
-        text.innerHTML=d.text || "";
+    if(d.time){
 
-    }else{
+        const date=new Date(Number(d.time)*1000);
 
-        icon.innerHTML="📞";
-        title.innerHTML="APPEL ENTRANT";
-        text.style.display="none";
+        time.textContent=date.toLocaleString();
 
     }
 
