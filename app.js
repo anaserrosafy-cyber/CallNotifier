@@ -79,7 +79,19 @@ item.status==="ended"
 
     <div class="top">
 
-        ${badge(item)}
+        <div style="
+display:flex;
+justify-content:space-between;
+align-items:center;">
+
+<div style="
+font-size:32px;">
+${icon}
+</div>
+
+${badge(item)}
+
+</div>
 
     </div>
 
