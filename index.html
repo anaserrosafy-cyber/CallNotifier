@@ -2,85 +2,181 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Call Notifier</title>
+<title>CallNotifier</title>
 
 <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
 body{
-    margin:0;
-    background:#0f172a;
-    color:white;
-    font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
+background:#0f172a;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+color:white;
+}
+
+header{
+padding:25px;
+font-size:30px;
+font-weight:bold;
+text-align:center;
+background:#111827;
+position:sticky;
+top:0;
+z-index:100;
+box-shadow:0 2px 20px rgba(0,0,0,.3);
+}
+
+#history{
+padding:20px;
+max-width:700px;
+margin:auto;
 }
 
 .card{
-    width:90%;
-    max-width:420px;
-    background:#1e293b;
-    border-radius:20px;
-    padding:30px;
-    text-align:center;
+
+background:#1e293b;
+
+border-radius:20px;
+
+padding:20px;
+
+margin-bottom:18px;
+
+box-shadow:0 8px 25px rgba(0,0,0,.25);
+
+transition:.2s;
+
 }
 
-.icon{
-    font-size:70px;
+.card:hover{
+
+transform:translateY(-2px);
+
 }
 
-.type{
-    font-size:28px;
-    font-weight:bold;
-    margin-top:10px;
+.row{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+margin-bottom:10px;
+
+}
+
+.badge{
+
+padding:6px 12px;
+
+border-radius:20px;
+
+font-size:13px;
+
+font-weight:bold;
+
+}
+
+.call{
+
+background:#16a34a;
+
+}
+
+.sms{
+
+background:#7c3aed;
+
 }
 
 .name{
-    margin-top:20px;
-    font-size:34px;
+
+font-size:24px;
+
+font-weight:bold;
+
+margin-top:8px;
+
 }
 
 .number{
-    margin-top:10px;
-    font-size:22px;
-    color:#cbd5e1;
+
+font-size:18px;
+
+color:#cbd5e1;
+
+margin-top:8px;
+
+word-break:break-word;
+
 }
 
 .time{
-    margin-top:20px;
-    color:#94a3b8;
+
+margin-top:15px;
+
+font-size:14px;
+
+color:#94a3b8;
+
 }
 
-.status{
-    margin-top:30px;
-    color:#22c55e;
+.smsText{
+
+margin-top:15px;
+
+background:#334155;
+
+padding:15px;
+
+border-radius:12px;
+
+display:none;
+
+white-space:pre-wrap;
+
 }
+
+.empty{
+
+text-align:center;
+
+margin-top:100px;
+
+font-size:22px;
+
+color:#94a3b8;
+
+}
+
 </style>
 
 </head>
 
 <body>
 
-<div class="card">
+<header>
 
-<div class="icon" id="icon">📞</div>
+📞 CallNotifier
 
-<div class="type" id="type">En attente...</div>
+</header>
 
-<div class="name" id="name">Aucun appel</div>
+<div id="history">
 
-<div class="number" id="number">---</div>
+<div class="empty">
 
-<div class="time" id="time"></div>
-
-<div class="status">
-🟢 Connecté
-</div>
+En attente...
 
 </div>
 
+</div>
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -99,35 +195,110 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const icon=document.getElementById("icon");
-const type=document.getElementById("type");
-const name=document.getElementById("name");
-const number=document.getElementById("number");
-const time=document.getElementById("time");
+const history=document.getElementById("history");
 
-onValue(ref(db,"call"),(snapshot)=>{
+onValue(ref(db,"calls"),(snapshot)=>{
 
-    const d=snapshot.val();
+    history.innerHTML="";
 
-    if(!d) return;
+    const data=snapshot.val();
 
-    icon.textContent=d.type==="sms"?"💬":"📞";
-    type.textContent=d.type==="sms"?"SMS":"APPEL ENTRANT";
+    if(!data){
 
-    name.textContent=d.name || "Numéro inconnu";
-    number.textContent=d.number || "";
-
-    if(d.time){
-
-        const date=new Date(Number(d.time)*1000);
-
-        time.textContent=date.toLocaleString();
+        history.innerHTML='<div class="empty">Aucun appel</div>';
+        return;
 
     }
 
-});
+    const list=Object.values(data);
+
+    list.sort((a,b)=>Number(b.time)-Number(a.time));
+for(const item of list){
+
+    const date=new Date(Number(item.time)*1000);
+
+    const heure=date.toLocaleString("fr-FR");
+
+    const typeClass=item.type==="sms"?"sms":"call";
+
+    const emoji=item.type==="sms"?"💬":"📞";
+
+    history.innerHTML+=`
+
+<div class="card">
+
+<div class="row">
+
+<span class="badge ${typeClass}">
+
+${emoji} ${item.type.toUpperCase()}
+
+</span>
+
+</div>
+
+<div class="name">
+
+${item.name || "Numéro inconnu"}
+
+</div>
+
+<div class="number">
+
+${item.number || ""}
+
+</div>
+
+<div class="smsText"
+
+style="${item.type==="sms"?"display:block":"display:none"}">
+
+${item.text || ""}
+
+</div>
+
+<div class="time">
+
+🕒 ${heure}
+
+</div>
+
+</div>
+
+`;
+
+}
+    });
 
 </script>
-
 </body>
 </html>
+.badge.call{
+background:#16a34a;
+}
+
+.badge.sms{
+background:#7c3aed;
+}
+
+.card{
+animation:fadeIn .25s ease;
+}
+
+@keyframes fadeIn{
+
+from{
+
+opacity:0;
+transform:translateY(15px);
+
+}
+
+to{
+
+opacity:1;
+transform:translateY(0);
+
+}
+
+}
