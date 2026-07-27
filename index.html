@@ -1,162 +1,17 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1">
 
 <title>CallNotifier</title>
 
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-}
-
-body{
-background:#0f172a;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-color:white;
-}
-
-header{
-padding:25px;
-font-size:30px;
-font-weight:bold;
-text-align:center;
-background:#111827;
-position:sticky;
-top:0;
-z-index:100;
-box-shadow:0 2px 20px rgba(0,0,0,.3);
-}
-
-#history{
-padding:20px;
-max-width:700px;
-margin:auto;
-}
-
-.card{
-
-background:#1e293b;
-
-border-radius:20px;
-
-padding:20px;
-
-margin-bottom:18px;
-
-box-shadow:0 8px 25px rgba(0,0,0,.25);
-
-transition:.2s;
-
-}
-
-.card:hover{
-
-transform:translateY(-2px);
-
-}
-
-.row{
-
-display:flex;
-
-justify-content:space-between;
-
-align-items:center;
-
-margin-bottom:10px;
-
-}
-
-.badge{
-
-padding:6px 12px;
-
-border-radius:20px;
-
-font-size:13px;
-
-font-weight:bold;
-
-}
-
-.call{
-
-background:#16a34a;
-
-}
-
-.sms{
-
-background:#7c3aed;
-
-}
-
-.name{
-
-font-size:24px;
-
-font-weight:bold;
-
-margin-top:8px;
-
-}
-
-.number{
-
-font-size:18px;
-
-color:#cbd5e1;
-
-margin-top:8px;
-
-word-break:break-word;
-
-}
-
-.time{
-
-margin-top:15px;
-
-font-size:14px;
-
-color:#94a3b8;
-
-}
-
-.smsText{
-
-margin-top:15px;
-
-background:#334155;
-
-padding:15px;
-
-border-radius:12px;
-
-display:none;
-
-white-space:pre-wrap;
-
-}
-
-.empty{
-
-text-align:center;
-
-margin-top:100px;
-
-font-size:22px;
-
-color:#94a3b8;
-
-}
-
-</style>
+<link rel="stylesheet"
+href="style.css">
 
 </head>
 
@@ -164,7 +19,9 @@ color:#94a3b8;
 
 <header>
 
-📞 CallNotifier
+<h1>📞 CallNotifier</h1>
+
+<p>Historique des appels</p>
 
 </header>
 
@@ -172,133 +29,15 @@ color:#94a3b8;
 
 <div class="empty">
 
-En attente...
-
-</div>
-
-</div>
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCFUl7qquf1JHF5z7wYo1Me4KveDEORCC4",
-  authDomain: "callnotifier-7e7ea.firebaseapp.com",
-  databaseURL: "https://callnotifier-7e7ea-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "callnotifier-7e7ea",
-  storageBucket: "callnotifier-7e7ea.firebasestorage.app",
-  messagingSenderId: "165647390009",
-  appId: "1:165647390009:web:b4751828e2f76a570544e8"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-const history=document.getElementById("history");
-
-onValue(ref(db,"calls"),(snapshot)=>{
-
-    history.innerHTML="";
-
-    const data=snapshot.val();
-
-    if(!data){
-
-        history.innerHTML='<div class="empty">Aucun appel</div>';
-        return;
-
-    }
-
-    const list=Object.values(data);
-
-    list.sort((a,b)=>Number(b.time)-Number(a.time));
-for(const item of list){
-
-    const date=new Date(Number(item.time)*1000);
-
-    const heure=date.toLocaleString("fr-FR");
-
-    const typeClass=item.type==="sms"?"sms":"call";
-
-    const emoji=item.type==="sms"?"💬":"📞";
-
-    history.innerHTML+=`
-
-<div class="card">
-
-<div class="row">
-
-<span class="badge ${typeClass}">
-
-${emoji} ${item.type.toUpperCase()}
-
-</span>
-
-</div>
-
-<div class="name">
-
-${item.name || "Numéro inconnu"}
-
-</div>
-
-<div class="number">
-
-${item.number || ""}
-
-</div>
-
-<div class="smsText"
-
-style="${item.type==="sms"?"display:block":"display:none"}">
-
-${item.text || ""}
-
-</div>
-
-<div class="time">
-
-🕒 ${heure}
+Chargement...
 
 </div>
 
 </div>
 
-`;
+<script type="module"
+src="app.js"></script>
 
-}
-    });
-
-</script>
 </body>
+
 </html>
-.badge.call{
-background:#16a34a;
-}
-
-.badge.sms{
-background:#7c3aed;
-}
-
-.card{
-animation:fadeIn .25s ease;
-}
-
-@keyframes fadeIn{
-
-from{
-
-opacity:0;
-transform:translateY(15px);
-
-}
-
-to{
-
-opacity:1;
-transform:translateY(0);
-
-}
-
-}
